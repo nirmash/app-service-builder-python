@@ -4,7 +4,7 @@ import unittest
 from http.client import HTTPConnection
 from unittest.mock import patch
 
-from app import Handler, MEME_URLS, SampleHTTPServer
+from app import Handler, MEMES, SampleHTTPServer
 
 
 class HTTPTests(unittest.TestCase):
@@ -55,9 +55,16 @@ class HTTPTests(unittest.TestCase):
         self.assertIn("App Service Builder / python-web: Hello", body)
         self.assertIn('id="meme-button"', body)
         self.assertIn('id="meme-image"', body)
+        self.assertIn('id="meme-caption"', body)
         self.assertIn("Math.random()", body)
-        for url in MEME_URLS:
+        self.assertEqual(len(MEMES), 12)
+        self.assertEqual(len({url for url, _ in MEMES}), 12)
+        self.assertEqual(len({caption for _, caption in MEMES}), 12)
+        for url, caption in MEMES:
             self.assertIn(url, body)
+            self.assertIn(caption, body)
+        self.assertIn("memeCaption.textContent = meme.caption", body)
+        self.assertNotIn("innerHTML", body)
         response.close()
 
     def test_health(self):

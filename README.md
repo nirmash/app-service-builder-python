@@ -11,7 +11,8 @@ cloud build or deployment.
 ## Features
 
 - `/` returns an HTML page with `App Service Builder / python-web: Hello` and a
-  button that displays a randomly selected meme from a predefined public image set.
+  button that displays one of 12 predefined public meme images with its own
+  predefined caption.
 - `/health` returns HTTP 200 and `OK`; unknown paths return HTTP 404.
 - `SAMPLE_GREETING` changes the deliberately public greeting.
 - Root-level `builder.yaml` explicitly selects Python 3.14, the startup command
@@ -71,7 +72,8 @@ curl -i http://localhost:8080/not-found
 
 Expect an HTTP 200 HTML page containing `App Service Builder / python-web: Hello`,
 HTTP 200 with `OK`, and HTTP 404 with `Not found`, respectively. Open `/` in a
-browser to use the random meme button. Stop the server with Ctrl+C.
+browser to use the random meme button and browse the captioned 12-meme catalog.
+Stop the server with Ctrl+C.
 Do not override `PORT`: this sample always listens on 8080.
 
 ## Demo
@@ -155,7 +157,8 @@ python3 -m unittest discover -s tests -v
 
 On Windows use `python` instead of `python3`. Tests start owned servers on
 ephemeral loopback ports, check responses and greetings, and shut down afterward.
-They do not deploy to Azure or require credentials.
+They also check the 12-item captioned meme catalog and safe browser text
+assignment. They do not deploy to Azure or require credentials.
 
 The build contract remains Python 3.14, `python app.py`, port 8080, and
 `/health` returning exactly HTTP 200. The manifest pins the runtime, startup

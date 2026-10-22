@@ -1,5 +1,6 @@
 """Dependency-free learning sample, not a production HTTP server."""
 
+import json
 import os
 from html import escape
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -7,16 +8,63 @@ from socketserver import TCPServer
 from urllib.parse import urlsplit
 
 
-MEME_URLS = (
-    "https://i.imgflip.com/30b1gx.jpg",
-    "https://i.imgflip.com/1g8my4.jpg",
-    "https://i.imgflip.com/1ur9b0.jpg",
-    "https://i.imgflip.com/22bdq6.jpg",
+MEMES = (
+    (
+        "https://i.imgflip.com/30b1gx.jpg",
+        "Deploying on Friday? I prefer deploying after the health check passes.",
+    ),
+    (
+        "https://i.imgflip.com/1g8my4.jpg",
+        "Me: one tiny change. Also me: refactors the entire sample.",
+    ),
+    (
+        "https://i.imgflip.com/1ur9b0.jpg",
+        "When the first request returns HTTP 200.",
+    ),
+    (
+        "https://i.imgflip.com/22bdq6.jpg",
+        "The tests passed locally, so now we watch the deployment logs.",
+    ),
+    (
+        "https://i.imgflip.com/261o3j.jpg",
+        "Is this a production-ready HTTP server?",
+    ),
+    (
+        "https://i.imgflip.com/2fm6x.jpg",
+        "Waiting for the build to finish without refreshing the page.",
+    ),
+    (
+        "https://i.imgflip.com/26am.jpg",
+        "One does not simply skip the health endpoint.",
+    ),
+    (
+        "https://i.imgflip.com/24y43o.jpg",
+        "The code works, but the deployment has other plans.",
+    ),
+    (
+        "https://i.imgflip.com/9ehk.jpg",
+        "What if I told you the sample has no third-party dependencies?",
+    ),
+    (
+        "https://i.imgflip.com/1c1uej.jpg",
+        "A successful local test is good. A verified deployment is better.",
+    ),
+    (
+        "https://i.imgflip.com/46e43q.jpg",
+        "Every environment variable is public if you print it on the page.",
+    ),
+    (
+        "https://i.imgflip.com/43a45p.jpg",
+        "The app, the manifest, and the runtime contract all agreeing.",
+    ),
 )
 
 
 def render_home(greeting):
-    meme_urls = ",\n                ".join(f'"{url}"' for url in MEME_URLS)
+    meme_catalog = json.dumps(
+        [{"url": url, "caption": caption} for url, caption in MEMES],
+        indent=12,
+    )
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -61,6 +109,13 @@ def render_home(greeting):
             max-height: 420px;
             max-width: 100%;
         }}
+        #meme-caption {{
+            display: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 1rem auto 0;
+            max-width: 36rem;
+        }}
     </style>
 </head>
 <body>
@@ -69,18 +124,21 @@ def render_home(greeting):
         <p>Click the button for a randomly selected meme.</p>
         <button id="meme-button" type="button">Show me a meme</button>
         <img id="meme-image" alt="A randomly selected meme">
+        <p id="meme-caption"></p>
     </main>
     <script>
-        const memeUrls = [
-                {meme_urls}
-        ];
+        const memes = {meme_catalog};
         const memeButton = document.getElementById("meme-button");
         const memeImage = document.getElementById("meme-image");
+        const memeCaption = document.getElementById("meme-caption");
 
         memeButton.addEventListener("click", () => {{
-            const randomIndex = Math.floor(Math.random() * memeUrls.length);
-            memeImage.src = memeUrls[randomIndex];
+            const randomIndex = Math.floor(Math.random() * memes.length);
+            const meme = memes[randomIndex];
+            memeImage.src = meme.url;
+            memeCaption.textContent = meme.caption;
             memeImage.style.display = "block";
+            memeCaption.style.display = "block";
         }});
     </script>
 </body>

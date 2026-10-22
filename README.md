@@ -10,7 +10,8 @@ cloud build or deployment.
 
 ## Features
 
-- `/` returns HTTP 200 and `App Service Builder / python-web: Hello`.
+- `/` returns an HTML page with `App Service Builder / python-web: Hello` and a
+  button that displays a randomly selected meme from a predefined public image set.
 - `/health` returns HTTP 200 and `OK`; unknown paths return HTTP 404.
 - `SAMPLE_GREETING` changes the deliberately public greeting.
 - Root-level `builder.yaml` explicitly selects Python 3.14, the startup command
@@ -68,8 +69,9 @@ curl -i http://localhost:8080/health
 curl -i http://localhost:8080/not-found
 ```
 
-Expect HTTP 200 with `App Service Builder / python-web: Hello`, HTTP 200 with `OK`,
-and HTTP 404 with `Not found`, respectively. Stop the server with Ctrl+C.
+Expect an HTTP 200 HTML page containing `App Service Builder / python-web: Hello`,
+HTTP 200 with `OK`, and HTTP 404 with `Not found`, respectively. Open `/` in a
+browser to use the random meme button. Stop the server with Ctrl+C.
 Do not override `PORT`: this sample always listens on 8080.
 
 ## Demo
@@ -109,7 +111,7 @@ SAMPLE_GREETING="Welcome" python3 app.py
 ```
 
 On Windows PowerShell set `$env:SAMPLE_GREETING = "Welcome"` and run `python app.py`.
-The root response becomes `App Service Builder / python-web: Welcome`.
+The root page heading becomes `App Service Builder / python-web: Welcome`.
 An unset or empty value uses `Hello`. **Never put secrets or personal data in this
 setting**: the value is returned publicly over HTTP.
 
